@@ -134,7 +134,7 @@ public class TaskOverlayFactory {
             AspectRatioSystemShortcut.Companion.createFactory(),
             TaskShortcutFactory.WELLBEING,
             TaskShortcutFactory.SAVE_APP_PAIR,
-            TaskShortcutFactory.SCREENSHOT,
+            // TaskShortcutFactory.SCREENSHOT,
             TaskShortcutFactory.MODAL,
     };
 
