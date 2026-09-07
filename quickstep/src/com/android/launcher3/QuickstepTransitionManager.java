@@ -257,6 +257,7 @@ public class QuickstepTransitionManager implements OnDeviceProfileChangeListener
     private final float mMaxShadowRadius;
 
     private boolean mBlurBackgroundAtAppLaunch = false;
+    @Nullable private SurfaceControl mAppLaunchBlurLayer;
 
     private final StartingWindowListener mStartingWindowListener =
             new StartingWindowListener(this);
@@ -1306,14 +1307,14 @@ public class QuickstepTransitionManager implements OnDeviceProfileChangeListener
             SurfaceControl parentSurface = viewRootImpl != null ?  viewRootImpl.getSurfaceControl() : null;
 
             if (parentSurface != null) {
+                cleanupAppLaunchBlurLayer();
                 SurfaceControl blurLayer = new SurfaceControl.Builder()
                         .setName("Blur Layer")
                         .setParent(parentSurface)
                         .setOpaque(false)
                         .setEffectLayer()
                         .build();
-
-                SurfaceControl. Transaction transaction = new SurfaceControl.Transaction();
+                mAppLaunchBlurLayer = blurLayer;
 
                 // Create an animator for the blur effect
                 backgroundRadiusAnim.addUpdateListener(animation -> {
@@ -1326,10 +1327,13 @@ public class QuickstepTransitionManager implements OnDeviceProfileChangeListener
 
                     // Dynamically update blur radius
                     if (blurLayer != null && blurLayer.isValid()) {
-                        transaction.setBackgroundBlurRadius(blurLayer, (int) blurRadius);
-                        transaction.setAlpha(blurLayer, 1f);
-                        transaction.show(blurLayer);
-                        transaction.apply();
+                        try (SurfaceControl.Transaction transaction =
+                                new SurfaceControl.Transaction()) {
+                            transaction.setBackgroundBlurRadius(blurLayer, (int) blurRadius);
+                            transaction.setAlpha(blurLayer, 1f);
+                            transaction.show(blurLayer);
+                            transaction.apply();
+                        }
                     }
                 });
 
@@ -1339,25 +1343,35 @@ public class QuickstepTransitionManager implements OnDeviceProfileChangeListener
                 backgroundRadiusAnim.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        cleanupBlurLayer(blurLayer, transaction);
+                        cleanupAppLaunchBlurLayer();
                     }
 
                     @Override
                     public void onAnimationCancel(Animator animation) {
-                        cleanupBlurLayer(blurLayer, transaction);
-                    }
-
-                    private void cleanupBlurLayer(SurfaceControl blurLayer, SurfaceControl.Transaction transaction) {
-                        if (blurLayer != null && blurLayer.isValid()) {
-                            transaction.remove(blurLayer). apply();
-                            blurLayer.release(); // Release the SurfaceControl to avoid leaks
-                        }
+                        cleanupAppLaunchBlurLayer();
                     }
                 });
             }
         }
 
         return backgroundRadiusAnim;
+    }
+
+    private void cleanupAppLaunchBlurLayer() {
+        SurfaceControl blurLayer = mAppLaunchBlurLayer;
+        if (blurLayer == null) {
+            return;
+        }
+        mAppLaunchBlurLayer = null;
+        if (blurLayer.isValid()) {
+            try (SurfaceControl.Transaction transaction = new SurfaceControl.Transaction()) {
+                transaction.setBackgroundBlurRadius(blurLayer, 0);
+                transaction.hide(blurLayer);
+                transaction.remove(blurLayer);
+                transaction.apply();
+            }
+        }
+        blurLayer.release();
     }
 
     /**
@@ -1458,6 +1472,7 @@ public class QuickstepTransitionManager implements OnDeviceProfileChangeListener
     }
 
     public void onActivityDestroyed() {
+        cleanupAppLaunchBlurLayer();
         unregisterRemoteAnimations();
         unregisterRemoteTransitions();
         mLauncher.removeOnDeviceProfileChangeListener(this);
