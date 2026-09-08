@@ -38,6 +38,7 @@ public class WorkspaceAnimator {
 
     private final Launcher mLauncher;
     private ValueAnimator mAnimator;
+    private boolean mReplacingAnimator;
 
     public WorkspaceAnimator(Launcher launcher) {
         mLauncher = launcher;
@@ -56,7 +57,9 @@ public class WorkspaceAnimator {
         if (workspace == null) return;
 
         if (mAnimator != null && mAnimator.isRunning()) {
+            mReplacingAnimator = true;
             mAnimator.cancel();
+            mReplacingAnimator = false;
         }
 
         float targetScale = show ? WORKSPACE_SCALE : 1f;
@@ -64,6 +67,8 @@ public class WorkspaceAnimator {
         float targetDepth = show ? WALLPAPER_DEPTH : 0f;
 
         mAnimator = ValueAnimator.ofFloat(0f, 1f);
+        ValueAnimator animator = mAnimator;
+        final boolean[] cancelled = {false};
         mAnimator.setDuration(ANIM_DURATION);
         mAnimator.setInterpolator(new android.view.animation.DecelerateInterpolator());
         mAnimator.addUpdateListener(anim -> {
@@ -83,10 +88,23 @@ public class WorkspaceAnimator {
 
         mAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
+            public void onAnimationCancel(Animator animation) {
+                cancelled[0] = true;
+                if (!mReplacingAnimator) {
+                    resetWorkspaceEffects(workspace, scaleWorkspace);
+                }
+            }
+
+            @Override
             public void onAnimationEnd(Animator animation) {
+                if (mAnimator == animator) {
+                    mAnimator = null;
+                }
+                if (cancelled[0]) {
+                    return;
+                }
                 if (!show) {
-                    applyBlur(0f);
-                    setWallpaperDepth(0f);
+                    resetWorkspaceEffects(workspace, scaleWorkspace);
                 }
                 if (onEnd != null) {
                     onEnd.run();
@@ -101,6 +119,15 @@ public class WorkspaceAnimator {
         if (mAnimator != null && mAnimator.isRunning()) {
             mAnimator.cancel();
         }
+    }
+
+    private void resetWorkspaceEffects(Workspace<?> workspace, boolean resetScale) {
+        if (resetScale) {
+            workspace.setScaleX(1f);
+            workspace.setScaleY(1f);
+        }
+        applyBlur(0f);
+        setWallpaperDepth(0f);
     }
 
     private void setWallpaperDepth(float depth) {
