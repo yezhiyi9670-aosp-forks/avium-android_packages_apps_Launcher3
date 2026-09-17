@@ -24,8 +24,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 public class TrustDatabaseHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "trust_apps_db";
 
     private static final String TABLE_NAME = "trust_apps";
@@ -33,9 +38,13 @@ public class TrustDatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_PKGNAME = "pkgname";
     private static final String KEY_HIDDEN = "hidden";
     private static final String KEY_PROTECTED = "protected";
+    private static final String KEY_RECENTS = "recents";
 
     @Nullable
     private static TrustDatabaseHelper sSingleton;
+
+    private final List<OnChangeListener> mChangeListeners = new CopyOnWriteArrayList<>();
+    private volatile int mRecentsVisibilityVersion = 0;
 
     private TrustDatabaseHelper(@NonNull Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -56,13 +65,18 @@ public class TrustDatabaseHelper extends SQLiteOpenHelper {
                 KEY_UID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 KEY_PKGNAME + " TEXT," +
                 KEY_HIDDEN + " INTEGER DEFAULT 0," +
-                KEY_PROTECTED + " INTEGER DEFAULT 0" +
+                KEY_PROTECTED + " INTEGER DEFAULT 0," +
+                KEY_RECENTS + " INTEGER DEFAULT 0" +
                 ")";
         db.execSQL(CMD_CREATE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        if (oldVersion < 2) {
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + KEY_RECENTS
+                    + " INTEGER DEFAULT 0");
+        }
     }
 
     public void addHiddenApp(@NonNull String packageName) {
@@ -198,5 +212,104 @@ public class TrustDatabaseHelper extends SQLiteOpenHelper {
         }
 
         return result;
+    }
+
+    public int getRecentsVisibility(@NonNull String packageName) {
+        String query = String.format("SELECT %s FROM %s WHERE %s = ?", KEY_RECENTS, TABLE_NAME,
+                KEY_PKGNAME);
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{packageName});
+        int result = RecentsComponent.VISIBLE;
+        try {
+            if (cursor.moveToFirst()) {
+                result = cursor.getInt(0);
+            }
+        } catch (Exception e) {
+            // Ignored
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+
+        return result;
+    }
+
+    public void setRecentsVisibility(@NonNull String packageName, int visibility) {
+        if (visibility == getRecentsVisibility(packageName)) {
+            return;
+        }
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+
+        try {
+            ContentValues values = new ContentValues();
+            values.put(KEY_RECENTS, visibility);
+
+            int rows = db.update(TABLE_NAME, values, KEY_PKGNAME + " = ?",
+                    new String[]{packageName});
+            if (rows == 0) {
+                // Entry doesn't exist, create a new one
+                values.put(KEY_PKGNAME, packageName);
+                db.insertOrThrow(TABLE_NAME, null, values);
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            // Ignored
+        } finally {
+            db.endTransaction();
+        }
+
+        mRecentsVisibilityVersion++;
+        notifyChanged();
+    }
+
+    public int getRecentsVisibilityVersion() {
+        return mRecentsVisibilityVersion;
+    }
+
+    /**
+     * Returns a map of package name to the configured recents visibility for every app that is not
+     * {@link RecentsComponent#VISIBLE}.
+     */
+    @NonNull
+    public Map<String, Integer> getRecentsVisibilityMap() {
+        Map<String, Integer> result = new HashMap<>();
+        String query = String.format("SELECT %s, %s FROM %s WHERE %s != 0", KEY_PKGNAME, KEY_RECENTS,
+                TABLE_NAME, KEY_RECENTS);
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        try {
+            while (cursor.moveToNext()) {
+                result.put(cursor.getString(0), cursor.getInt(1));
+            }
+        } catch (Exception e) {
+            // Ignored
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+
+        return result;
+    }
+
+    public void addOnChangeListener(@NonNull OnChangeListener listener) {
+        mChangeListeners.add(listener);
+    }
+
+    public void removeOnChangeListener(@NonNull OnChangeListener listener) {
+        mChangeListeners.remove(listener);
+    }
+
+    private void notifyChanged() {
+        for (OnChangeListener listener : mChangeListeners) {
+            listener.onChange();
+        }
+    }
+
+    public interface OnChangeListener {
+        void onChange();
     }
 }

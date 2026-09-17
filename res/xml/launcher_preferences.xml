@@ -75,6 +75,10 @@
         android:key="pref_trust_apps"
         android:title="@string/trust_apps_manager_name" />
 
+    <Preference
+        android:key="pref_recents_apps"
+        android:title="@string/recents_apps_manager_name" />
+
     <androidx.preference.PreferenceScreen
         android:key="pref_suggestions"
         android:title="@string/pref_suggestions_title"

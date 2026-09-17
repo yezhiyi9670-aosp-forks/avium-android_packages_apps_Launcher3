@@ -1,0 +1,164 @@
+/*
+ * Copyright (C) 2024 The LineageOS Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.android.launcher3.lineage.trust;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.launcher3.AppFilter;
+import com.android.launcher3.LauncherAppState;
+import com.android.launcher3.LauncherPrefs;
+import com.android.launcher3.R;
+import com.android.launcher3.lineage.trust.db.RecentsComponent;
+import com.android.launcher3.lineage.trust.db.TrustDatabaseHelper;
+
+import java.util.List;
+
+public class RecentsAppsActivity extends Activity implements
+        RecentsAppsAdapter.Listener,
+        LoadRecentsComponentsTask.Callback,
+        UpdateRecentsItemTask.UpdateCallback {
+
+    private static final String KEY_RECENTS_ONBOARDING = "pref_recents_onboarding";
+
+    private RecyclerView mRecyclerView;
+    private LinearLayout mLoadingView;
+    private ProgressBar mProgressBar;
+
+    private TrustDatabaseHelper mDbHelper;
+    private RecentsAppsAdapter mAdapter;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstance) {
+        super.onCreate(savedInstance);
+
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        setupEdgeToEdge();
+        setContentView(R.layout.activity_hidden_apps);
+        mRecyclerView = findViewById(R.id.hidden_apps_list);
+        mLoadingView = findViewById(R.id.hidden_apps_loading);
+        mLoadingView.setVisibility(View.VISIBLE);
+        mProgressBar = findViewById(R.id.hidden_apps_progress_bar);
+
+        mAdapter = new RecentsAppsAdapter(this);
+        mDbHelper = TrustDatabaseHelper.getInstance(this);
+
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setAdapter(mAdapter);
+
+        showOnBoarding(false);
+
+        final AppFilter appFilter = new AppFilter(this);
+        new LoadRecentsComponentsTask(mDbHelper, getPackageManager(), appFilter, this).execute();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_recents_apps, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        } else if (id == R.id.menu_recents_help) {
+            showOnBoarding(true);
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onRecentsItemChanged(@NonNull RecentsComponent component) {
+        new UpdateRecentsItemTask(mDbHelper, this).execute(component);
+    }
+
+    @Override
+    public void onUpdated(boolean result) {
+        LauncherAppState.INSTANCE.get(this).getModel().reloadIfActive();
+    }
+
+    @Override
+    public void onLoadListProgress(int progress) {
+        mProgressBar.setProgress(progress);
+    }
+
+    @Override
+    public void onLoadCompleted(List<RecentsComponent> result) {
+        mLoadingView.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mAdapter.update(result);
+    }
+
+    private void setupEdgeToEdge() {
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content),
+                (v, windowInsets) -> {
+                    Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+                    // Apply the insets paddings to the view.
+                    v.setPadding(insets.left, insets.top, insets.right, insets.bottom);
+
+                    // Return CONSUMED if you don't want the window insets to keep being
+                    // passed down to descendant views.
+                    return WindowInsetsCompat.CONSUMED;
+                });
+    }
+
+    private void showOnBoarding(boolean forceShow) {
+        SharedPreferences preferenceManager = LauncherPrefs.getPrefs(this);
+        if (!forceShow && preferenceManager.getBoolean(KEY_RECENTS_ONBOARDING, false)) {
+            return;
+        }
+
+        preferenceManager.edit()
+                .putBoolean(KEY_RECENTS_ONBOARDING, true)
+                .apply();
+
+        new AlertDialog.Builder(this)
+                .setView(R.layout.dialog_recents_welcome)
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
+    }
+}

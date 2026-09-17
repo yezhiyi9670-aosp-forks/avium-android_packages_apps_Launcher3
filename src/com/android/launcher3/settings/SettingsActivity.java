@@ -61,6 +61,7 @@ import com.android.launcher3.InvariantDeviceProfile;
 import com.android.launcher3.LauncherFiles;
 import com.android.launcher3.R;
 import com.android.launcher3.lineage.LineageUtils;
+import com.android.launcher3.lineage.trust.RecentsAppsActivity;
 import com.android.launcher3.lineage.trust.TrustAppsActivity;
 import com.android.launcher3.states.RotationHelper;
 import com.android.launcher3.util.DisplayController;
@@ -94,6 +95,7 @@ public class SettingsActivity extends FragmentActivity
     private static final String KEY_MINUS_ONE = "pref_enable_minus_one";
     private static final String SEARCH_PACKAGE = "com.google.android.googlequicksearchbox";
     public static final String KEY_TRUST_APPS = "pref_trust_apps";
+    public static final String KEY_RECENTS_APPS = "pref_recents_apps";
 
     private static final String KEY_SUGGESTIONS = "pref_suggestions";
     private static final String SUGGESTIONS_PACKAGE = "com.google.android.as";
@@ -368,6 +370,16 @@ public class SettingsActivity extends FragmentActivity
                         LineageUtils.showLockScreen(getActivity(),
                                 getString(R.string.trust_apps_manager_name), () -> {
                             Intent intent = new Intent(getActivity(), TrustAppsActivity.class);
+                            startActivity(intent);
+                        });
+                        return true;
+                    });
+                    return true;
+                case KEY_RECENTS_APPS:
+                    preference.setOnPreferenceClickListener(p -> {
+                        LineageUtils.showLockScreen(getActivity(),
+                                getString(R.string.recents_apps_manager_name), () -> {
+                            Intent intent = new Intent(getActivity(), RecentsAppsActivity.class);
                             startActivity(intent);
                         });
                         return true;
