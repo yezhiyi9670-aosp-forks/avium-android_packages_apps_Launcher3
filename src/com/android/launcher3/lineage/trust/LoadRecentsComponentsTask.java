@@ -15,16 +15,16 @@
  */
 package com.android.launcher3.lineage.trust;
 
-import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
 
-import com.android.launcher3.AppFilter;
 import com.android.launcher3.lineage.trust.db.RecentsComponent;
 import com.android.launcher3.lineage.trust.db.TrustDatabaseHelper;
 
@@ -41,18 +41,13 @@ public class LoadRecentsComponentsTask
     private PackageManager mPackageManager;
 
     @NonNull
-    private AppFilter mAppFilter;
-
-    @NonNull
     private Callback mCallback;
 
     LoadRecentsComponentsTask(@NonNull TrustDatabaseHelper dbHelper,
             @NonNull PackageManager packageManager,
-            @NonNull AppFilter appFilter,
             @NonNull Callback callback) {
         mDbHelper = dbHelper;
         mPackageManager = packageManager;
-        mAppFilter = appFilter;
         mCallback = callback;
     }
 
@@ -60,32 +55,44 @@ public class LoadRecentsComponentsTask
     protected List<RecentsComponent> doInBackground(Void... voids) {
         List<RecentsComponent> list = new ArrayList<>();
 
-        Intent filter = new Intent(Intent.ACTION_MAIN, null);
-        filter.addCategory(Intent.CATEGORY_LAUNCHER);
+        // Unlike the launcher drawer, recents can contain any app that has at least one activity
+        // which is able to appear in recents, whether or not it has a launcher icon.
+        final List<PackageInfo> packages = mPackageManager.getInstalledPackages(
+                PackageManager.GET_ACTIVITIES);
 
-        List<ResolveInfo> apps = mPackageManager.queryIntentActivities(filter,
-                PackageManager.GET_META_DATA);
-
-        int numPackages = apps.size();
+        int numPackages = packages.size();
         for (int i = 0; i < numPackages; i++) {
-            ResolveInfo app = apps.get(i);
+            PackageInfo pkg = packages.get(i);
+            if (pkg.activities == null || pkg.activities.length == 0) {
+                continue;
+            }
 
-            if (!mAppFilter.shouldShowApp(app.activityInfo.getComponentName())) {
+            boolean hasRecentsActivity = false;
+            for (ActivityInfo activity : pkg.activities) {
+                if ((activity.flags & ActivityInfo.FLAG_EXCLUDE_FROM_RECENTS) == 0) {
+                    hasRecentsActivity = true;
+                    break;
+                }
+            }
+            if (!hasRecentsActivity) {
+                continue;
+            }
+
+            final ApplicationInfo appInfo = pkg.applicationInfo;
+            if (appInfo == null) {
                 continue;
             }
 
             try {
-                String pkgName = app.activityInfo.packageName;
-                String label = mPackageManager.getApplicationLabel(
-                        mPackageManager.getApplicationInfo(pkgName,
-                                PackageManager.GET_META_DATA)).toString();
-                Drawable icon = app.loadIcon(mPackageManager);
+                String pkgName = pkg.packageName;
+                String label = mPackageManager.getApplicationLabel(appInfo).toString();
+                Drawable icon = appInfo.loadIcon(mPackageManager);
                 int visibility = mDbHelper.getRecentsVisibility(pkgName);
 
                 list.add(new RecentsComponent(pkgName, icon, label, visibility));
 
                 publishProgress(Math.round(i * 100f / numPackages));
-            } catch (PackageManager.NameNotFoundException ignored) {
+            } catch (Exception ignored) {
             }
         }
 
