@@ -48,6 +48,7 @@ import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.util.SystemUiController;
 import com.android.launcher3.util.SystemUiController.SystemUiControllerFlags;
+import com.android.launcher3.util.Themes;
 import com.android.launcher3.util.ViewPool;
 import com.android.quickstep.FullscreenDrawParams;
 import com.android.quickstep.TaskOverlayFactory.TaskOverlay;
@@ -161,7 +162,9 @@ public class TaskThumbnailViewDeprecated extends View implements ViewPool.Reusab
         mOverlay.reset();
         mTask = task;
         mTaskView = taskView;
-        int color = task == null ? Color.BLACK : task.colorBackground | 0xFF000000;
+        // Use the launcher's themed background instead of the app provided
+        // TaskDescription background, which is inconsistent across apps.
+        int color = Themes.getColorBackground(getContext()) | 0xFF000000;
         mPaint.setColor(color);
         mBackgroundPaint.setColor(color);
         mSplashBackgroundPaint.setColor(color);

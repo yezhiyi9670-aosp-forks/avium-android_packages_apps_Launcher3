@@ -28,6 +28,7 @@ import com.android.launcher3.Flags.enableRefactorTaskThumbnail
 import com.android.launcher3.lineage.trust.RecentsVisibility
 import com.android.launcher3.model.data.TaskViewItemInfo
 import com.android.launcher3.util.SplitConfigurationOptions
+import com.android.launcher3.util.Themes
 import com.android.launcher3.util.TransformingTouchDelegate
 import com.android.quickstep.TaskOverlayFactory
 import com.android.quickstep.ViewUtils.addAccessibleChildToList
@@ -213,16 +214,24 @@ class TaskContainer(
      * untouched so that the screenshot action can still capture it.
      */
     private fun getThumbnailUiState(state: TaskData?): TaskThumbnailUiState {
+        val backgroundColor = Themes.getColorBackground(taskView.context)
         val thumbnailState = TaskUiStateMapper.toTaskThumbnailUiState(state)
-        if (state !is TaskData.Data || taskView.isRunningTask) {
-            return thumbnailState
+        if (state is TaskData.Data &&
+            !taskView.isRunningTask &&
+            RecentsVisibility.getInstance(taskView.context).shouldHideThumbnail(state.packageName)
+        ) {
+            // Content is hidden, but the snapshot itself is preserved for the screenshot action.
+            return TaskThumbnailUiState.BackgroundOnly(backgroundColor)
         }
-        if (!RecentsVisibility.getInstance(taskView.context)
-                .shouldHideThumbnail(state.packageName)) {
-            return thumbnailState
+        return when (thumbnailState) {
+            is TaskThumbnailUiState.SnapshotSplash ->
+                thumbnailState.copy(
+                    snapshot = thumbnailState.snapshot.copy(backgroundColor = backgroundColor),
+                )
+            is TaskThumbnailUiState.BackgroundOnly ->
+                TaskThumbnailUiState.BackgroundOnly(backgroundColor)
+            else -> thumbnailState
         }
-        // Content is hidden, but the snapshot itself is preserved for the screenshot action.
-        return TaskThumbnailUiState.BackgroundOnly(state.backgroundColor)
     }
 
     fun updateTintAmount(tintAmount: Float) {
