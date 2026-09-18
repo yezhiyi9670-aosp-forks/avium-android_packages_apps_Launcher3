@@ -165,6 +165,7 @@ import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.dagger.LauncherComponentProvider;
 import com.android.launcher3.desktop.DesktopRecentsTransitionController;
 import com.android.launcher3.deviceprofile.OverviewProfile;
+import com.android.launcher3.lineage.trust.RecentsVisibility;
 import com.android.launcher3.logger.LauncherAtom;
 import com.android.launcher3.logging.StatsLogManager;
 import com.android.launcher3.model.data.ItemInfo;
@@ -277,6 +278,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -2978,8 +2980,7 @@ public abstract class RecentsView<
      */
     public void reloadIfNeeded() {
         if (!mModel.isTaskListValid(mAppliedTaskListChangeId)) {
-            mModel.getTasks(this::applyLoadPlan, RecentsFilterState
-                    .getFilter(mFilterState.getPackageNameToFilter(), mContainer.getDisplayId()));
+            mModel.getTasks(this::applyLoadPlan, getTaskFilter());
             Log.d(TAG, "reloadIfNeeded - getTasks: " + mAppliedTaskListChangeId);
             if (enableRefactorTaskThumbnail()) {
                 mRecentsViewModel.refreshAllTaskData();
@@ -2987,6 +2988,40 @@ public abstract class RecentsView<
         } else {
             Log.d(TAG, "reloadIfNeeded - task list still valid: " + mAppliedTaskListChangeId);
         }
+    }
+
+    private Predicate<GroupTask> getTaskFilter() {
+        return RecentsFilterState
+                .getFilter(mFilterState.getPackageNameToFilter(), mContainer.getDisplayId())
+                .and(this::keepGroupTask);
+    }
+
+    /**
+     * Applies the configured recents visibility on top of the default task filter.
+     *
+     * <p>Only fullscreen single tasks can be dropped entirely. Group tasks (split screen pairs)
+     * are never hidden as a whole: whenever one of their halves is configured to be hidden, that
+     * half is instead content-hidden at the view level.
+     *
+     * <p>The task we entered recents from is always kept, so that the app the user came from stays
+     * reachable while overview is open.
+     */
+    private boolean keepGroupTask(GroupTask groupTask) {
+        if (!(groupTask instanceof SingleTask)) {
+            return true;
+        }
+
+        Task task = groupTask.getTasks().get(0);
+        if (!RecentsVisibility.getInstance(getContext()).isFullyHidden(task.key.getPackageName())) {
+            return true;
+        }
+
+        for (int runningTaskId : getTaskIdsForRunningTaskView()) {
+            if (runningTaskId == task.key.id) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void setActiveGestureGroupedTaskInfo(GroupedTaskInfo groupedTaskInfo) {

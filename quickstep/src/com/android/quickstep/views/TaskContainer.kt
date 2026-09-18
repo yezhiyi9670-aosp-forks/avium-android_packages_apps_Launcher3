@@ -25,6 +25,7 @@ import com.android.app.tracing.traceSection
 import com.android.launcher3.Flags.enableRefactorDigitalWellbeingToast
 import com.android.launcher3.Flags.enableRefactorTaskContentView
 import com.android.launcher3.Flags.enableRefactorTaskThumbnail
+import com.android.launcher3.lineage.trust.RecentsVisibility
 import com.android.launcher3.model.data.TaskViewItemInfo
 import com.android.launcher3.util.SplitConfigurationOptions
 import com.android.launcher3.util.TransformingTouchDelegate
@@ -34,6 +35,7 @@ import com.android.quickstep.recents.domain.usecase.ThumbnailPosition
 import com.android.quickstep.recents.ui.mapper.TaskUiStateMapper
 import com.android.quickstep.recents.ui.viewmodel.TaskData
 import com.android.quickstep.task.thumbnail.TaskContentView
+import com.android.quickstep.task.thumbnail.TaskThumbnailUiState
 import com.android.quickstep.task.thumbnail.TaskThumbnailView
 import com.android.systemui.shared.recents.model.Task
 import com.android.systemui.shared.recents.model.ThumbnailData
@@ -118,6 +120,11 @@ class TaskContainer(
             digitalWellBeingToast?.bind(task, taskView, snapshotView, stagePosition)
             if (!enableRefactorTaskThumbnail()) {
                 thumbnailViewDeprecated.bind(task, overlay, taskView)
+                thumbnailViewDeprecated.setContentHidden(
+                    RecentsVisibility.getInstance(taskView.context).shouldHideThumbnail(
+                        task.key.packageName,
+                    ),
+                )
             }
         }
 
@@ -185,22 +192,38 @@ class TaskContainer(
         clickCloseListener: OnClickListener?,
     ) =
         traceSection("TaskContainer.setState") {
+            val thumbnailState = getThumbnailUiState(state)
             if (enableRefactorTaskContentView()) {
                 (taskContentView as TaskContentView).setState(
                     TaskUiStateMapper.toTaskHeaderState(state, hasHeader, clickCloseListener),
-                    TaskUiStateMapper.toTaskThumbnailUiState(state),
+                    thumbnailState,
                     TaskUiStateMapper.toTaskAppTimerUiState(canShowAppTimer, stagePosition, state),
                     state?.taskId,
                 )
             } else {
-                thumbnailView.setState(
-                    TaskUiStateMapper.toTaskThumbnailUiState(state),
-                    state?.taskId,
-                )
+                thumbnailView.setState(thumbnailState, state?.taskId)
             }
             thumbnailData = if (state is TaskData.Data) state.thumbnailData else null
             overlay.setThumbnailState(thumbnailData)
         }
+
+    /**
+     * Resolves the thumbnail UI state for [state], hiding the screenshot content for apps whose
+     * configured recents visibility requires it. The real [thumbnailData] is intentionally left
+     * untouched so that the screenshot action can still capture it.
+     */
+    private fun getThumbnailUiState(state: TaskData?): TaskThumbnailUiState {
+        val thumbnailState = TaskUiStateMapper.toTaskThumbnailUiState(state)
+        if (state !is TaskData.Data || taskView.isRunningTask) {
+            return thumbnailState
+        }
+        if (!RecentsVisibility.getInstance(taskView.context)
+                .shouldHideThumbnail(state.packageName)) {
+            return thumbnailState
+        }
+        // Content is hidden, but the snapshot itself is preserved for the screenshot action.
+        return TaskThumbnailUiState.BackgroundOnly(state.backgroundColor)
+    }
 
     fun updateTintAmount(tintAmount: Float) {
         thumbnailView.updateTintAmount(tintAmount)

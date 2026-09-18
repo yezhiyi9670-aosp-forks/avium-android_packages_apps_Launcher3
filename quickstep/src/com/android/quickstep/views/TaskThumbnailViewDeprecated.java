@@ -125,6 +125,11 @@ public class TaskThumbnailViewDeprecated extends View implements ViewPool.Reusab
     private boolean mOverlayEnabled;
     /** Used as a placeholder when the original thumbnail animates out to. */
     private boolean mShowSplashForSplitSelection;
+    /**
+     * Whether the screenshot thumbnail should be hidden. The real snapshot is intentionally kept
+     * around so that the screenshot action can still capture it.
+     */
+    private boolean mContentHidden;
 
     public TaskThumbnailViewDeprecated(Context context) {
         this(context, null);
@@ -305,9 +310,15 @@ public class TaskThumbnailViewDeprecated extends View implements ViewPool.Reusab
         canvas.drawRoundRect(x, y + 1, width, height - 1, cornerRadius,
                 cornerRadius, mBackgroundPaint);
 
+        final boolean contentHidden = isContentHidden();
         final boolean drawBackgroundOnly = mTask == null || mTask.isLocked || mBitmapShader == null
-                || mThumbnailData == null;
+                || mThumbnailData == null || contentHidden;
         if (drawBackgroundOnly) {
+            if (contentHidden) {
+                // Keep the real thumbnail data around (for the screenshot action) but only draw
+                // the app icon so the actual content cannot be peeked.
+                drawSplashOverlay(canvas, x, y, width, height, cornerRadius, true /* forceOpaque */);
+            }
             return;
         }
 
@@ -315,21 +326,62 @@ public class TaskThumbnailViewDeprecated extends View implements ViewPool.Reusab
 
         // Draw splash above thumbnail to hide inconsistencies in rotation and aspect ratios.
         if (shouldShowSplashView()) {
-            float cornerRadiusX = cornerRadius;
-            float cornerRadiusY = cornerRadius;
-            if (mShowSplashForSplitSelection) {
-                cornerRadiusX = cornerRadius / getScaleX();
-                cornerRadiusY = cornerRadius / getScaleY();
-            }
+            drawSplashOverlay(canvas, x, y, width, height, cornerRadius, false /* forceOpaque */);
+        }
+    }
 
-            // Always draw background for hiding inconsistencies, even if splash view is not yet
-            // loaded (which can happen as task icons are loaded asynchronously in the background)
-            canvas.drawRoundRect(x, y, width + 1, height + 1, cornerRadiusX,
-                    cornerRadiusY, mSplashBackgroundPaint);
-            if (mSplashView != null) {
-                mSplashView.layout((int) x, (int) (y + 1), (int) width, (int) height - 1);
-                mSplashView.draw(canvas);
+    /**
+     * Whether the configured recents visibility requires hiding this task's content. The task the
+     * user entered recents from is always treated as visible.
+     */
+    private boolean isContentHidden() {
+        return mContentHidden && mTaskView != null && !mTaskView.isRunningTask();
+    }
+
+    private void drawSplashOverlay(Canvas canvas, float x, float y, float width, float height,
+            float cornerRadius, boolean forceOpaque) {
+        float cornerRadiusX = cornerRadius;
+        float cornerRadiusY = cornerRadius;
+        if (mShowSplashForSplitSelection) {
+            cornerRadiusX = cornerRadius / getScaleX();
+            cornerRadiusY = cornerRadius / getScaleY();
+        }
+
+        final int previousBackgroundAlpha = mSplashBackgroundPaint.getAlpha();
+        final int previousIconAlpha = mSplashViewDrawable != null
+                ? mSplashViewDrawable.getAlpha() : 0;
+        if (forceOpaque) {
+            mSplashBackgroundPaint.setAlpha(255);
+            if (mSplashViewDrawable != null) {
+                mSplashViewDrawable.setAlpha(255);
             }
+        }
+
+        // Always draw background for hiding inconsistencies, even if splash view is not yet
+        // loaded (which can happen as task icons are loaded asynchronously in the background)
+        canvas.drawRoundRect(x, y, width + 1, height + 1, cornerRadiusX,
+                cornerRadiusY, mSplashBackgroundPaint);
+        if (mSplashView != null) {
+            mSplashView.layout((int) x, (int) (y + 1), (int) width, (int) height - 1);
+            mSplashView.draw(canvas);
+        }
+
+        if (forceOpaque) {
+            mSplashBackgroundPaint.setAlpha(previousBackgroundAlpha);
+            if (mSplashViewDrawable != null) {
+                mSplashViewDrawable.setAlpha(previousIconAlpha);
+            }
+        }
+    }
+
+    /**
+     * Sets whether the thumbnail should be visually hidden. The real snapshot data is preserved so
+     * that the screenshot action can still capture it.
+     */
+    public void setContentHidden(boolean contentHidden) {
+        if (mContentHidden != contentHidden) {
+            mContentHidden = contentHidden;
+            invalidate();
         }
     }
 

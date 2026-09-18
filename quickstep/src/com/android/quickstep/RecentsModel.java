@@ -45,6 +45,7 @@ import com.android.launcher3.graphics.ThemeManager;
 import com.android.launcher3.graphics.ThemeManager.ThemeChangeListener;
 import com.android.launcher3.icons.IconChangeTracker;
 import com.android.launcher3.icons.IconProvider;
+import com.android.launcher3.lineage.trust.db.TrustDatabaseHelper;
 import com.android.launcher3.util.DaggerSingletonObject;
 import com.android.launcher3.util.DaggerSingletonTracker;
 import com.android.launcher3.util.DisplayController;
@@ -181,6 +182,11 @@ public class RecentsModel implements RecentTasksDataSource, TaskStackChangeListe
         mIconCache.registerTaskVisualsChangeListener(this);
         mThumbnailCache = thumbnailCache;
         mUiExecutor = uiExecutor;
+        TrustDatabaseHelper trustDbHelper = TrustDatabaseHelper.getInstance(context);
+        TrustDatabaseHelper.OnChangeListener recentsVisibilityListener = this::invalidateTaskList;
+        trustDbHelper.addOnChangeListener(recentsVisibilityListener);
+        tracker.addCloseable(
+                () -> trustDbHelper.removeOnChangeListener(recentsVisibilityListener));
         if (isCachePreloadingEnabled()) {
             ComponentCallbacks componentCallbacks = new ComponentCallbacks() {
                 @Override
@@ -281,6 +287,14 @@ public class RecentsModel implements RecentTasksDataSource, TaskStackChangeListe
     @VisibleForTesting
     public boolean isLoadingTasksInBackground() {
         return mTaskList.isLoadingTasksInBackground();
+    }
+
+    /**
+     * Invalidates the cached recent tasks list so that the next reload picks up changes to the
+     * recents visibility configuration.
+     */
+    public void invalidateTaskList() {
+        mUiExecutor.post(() -> mTaskList.onRecentTasksChanged());
     }
 
     /**
