@@ -21,6 +21,7 @@ import static com.android.launcher3.lineage.trust.db.TrustComponent.Kind.PROTECT
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.appwidget.AppWidgetManager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
@@ -93,7 +94,9 @@ public class TrustAppsActivity extends Activity implements
         showOnBoarding(false);
 
         final AppFilter appFilter = new AppFilter(this);
-        new LoadTrustComponentsTask(mDbHelper, getPackageManager(), appFilter, this).execute();
+        final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        new LoadTrustComponentsTask(mDbHelper, getPackageManager(), appWidgetManager,
+                appFilter, this).execute();
     }
 
     @Override
