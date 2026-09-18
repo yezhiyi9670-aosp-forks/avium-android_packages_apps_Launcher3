@@ -102,7 +102,7 @@ public class ItemClickHandler {
         if (tag instanceof WorkspaceItemInfo) {
             onClickAppShortcut(v, (WorkspaceItemInfo) tag, launcher);
         } else if (tag instanceof FolderInfo) {
-            onClickFolderIcon(v);
+            onClickFolderIcon(v, launcher);
         } else if (tag instanceof AppPairInfo) {
             onClickAppPairIcon(v);
         } else if (tag instanceof AppInfo) {
@@ -132,10 +132,15 @@ public class ItemClickHandler {
      * Event handler for a folder icon click.
      *
      * @param v The view that was clicked. Must be an instance of {@link FolderIcon}.
+     * @param launcher The launcher instance the folder belongs to.
      */
-    private static void onClickFolderIcon(View v) {
+    private static void onClickFolderIcon(View v, Launcher launcher) {
         Folder folder = ((FolderIcon) v).getFolder();
         if (!folder.isOpen() && !folder.isDestroyed()) {
+            // A folder can be clicked while a state animation (e.g. the workspace reveal when
+            // returning home) is still running. Fully interrupt it first, so its depth/blur
+            // cleanup cannot interfere with the folder-opening animation.
+            launcher.getStateManager().reapplyState(true /* cancelCurrentAnimation */);
             // Open the requested folder
             folder.animateOpen();
             StatsLogManager.newInstance(v.getContext()).logger().withItemInfo(folder.mInfo)
