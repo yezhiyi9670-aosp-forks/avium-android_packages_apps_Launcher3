@@ -89,7 +89,7 @@ public class FolderAnimationManager implements FolderAnimationCreator {
     private final Interpolator mFolderCloseInterpolator;
     private final Interpolator mLargeFolderPreviewItemOpenInterpolator;
     private final Interpolator mLargeFolderPreviewItemCloseInterpolator;
-    private final Interpolator mLargeFolderOpenInterpolator;
+    private final Interpolator mLargeFolderInterpolator;
 
     private final PreviewItemDrawingParams mTmpParams = new PreviewItemDrawingParams(0, 0, 0);
     private final FolderGridOrganizer mPreviewVerifier;
@@ -124,7 +124,7 @@ public class FolderAnimationManager implements FolderAnimationCreator {
                 R.interpolator.large_folder_preview_item_open_interpolator);
         mLargeFolderPreviewItemCloseInterpolator = AnimationUtils.loadInterpolator(mContext,
                 R.interpolator.standard_accelerate_interpolator);
-        mLargeFolderOpenInterpolator = AnimationUtils.loadInterpolator(mContext,
+        mLargeFolderInterpolator = AnimationUtils.loadInterpolator(mContext,
                 android.R.interpolator.fast_out_extra_slow_in);
     }
 
@@ -457,10 +457,9 @@ public class FolderAnimationManager implements FolderAnimationCreator {
             }
         });
 
-        if (mIsOpening) {
-            for (Animator animator : animatorSet.getChildAnimations()) {
-                animator.setInterpolator(mLargeFolderOpenInterpolator);
-            }
+        // Keep both directions symmetric: apply the same curve when closing as when opening.
+        for (Animator animator : animatorSet.getChildAnimations()) {
+            animator.setInterpolator(mLargeFolderInterpolator);
         }
 
         return animatorSet;
