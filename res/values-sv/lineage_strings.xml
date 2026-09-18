@@ -24,4 +24,13 @@
     <string name="trust_apps_help">Hjälp</string>
     <string name="pref_suggestions_title">Förslag</string>
     <string name="pref_suggestions_summary">För förslag på app- &amp; hemskärmen</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">Dölj appar i senaste</string>
+    <string name="recents_apps_help">Hjälp</string>
+    <string name="recents_visibility_visible">Synlig</string>
+    <string name="recents_visibility_content_hidden">Innehåll dolt</string>
+    <string name="recents_visibility_fully_hidden">Helt dold</string>
+    <string name="recents_apps_info_visible">Synlig: appen och dess skärmbild visas i senaste</string>
+    <string name="recents_apps_info_content_hidden">Innehåll dolt: appen visas i senaste, men dess skärmbild är dold</string>
+    <string name="recents_apps_info_fully_hidden">Helt dold: appen är dold i senaste</string>
 </resources>

@@ -23,4 +23,13 @@
     <string name="trust_apps_auth_manager">Розблокуйте, щоб керувати схованими й захищеними застосунками</string>
     <string name="trust_apps_info_hidden">Схованих застосунків і віджетів не видно в меню</string>
     <string name="trust_apps_info_protected">Захищені застосунки запитують пароль при запуску</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">Приховати застосунки з недавніх</string>
+    <string name="recents_apps_help">Довідка</string>
+    <string name="recents_visibility_visible">Видимі</string>
+    <string name="recents_visibility_content_hidden">Вміст приховано</string>
+    <string name="recents_visibility_fully_hidden">Повністю приховано</string>
+    <string name="recents_apps_info_visible">Видимі: застосунок і його знімок екрана відображаються в недавніх</string>
+    <string name="recents_apps_info_content_hidden">Вміст приховано: застосунок відображається в недавніх, але його знімок екрана приховано</string>
+    <string name="recents_apps_info_fully_hidden">Повністю приховано: застосунок приховано з недавніх</string>
 </resources>

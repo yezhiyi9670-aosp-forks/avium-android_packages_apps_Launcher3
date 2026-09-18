@@ -37,4 +37,13 @@
     <string name="trust_apps_info_protected">Chráněné aplikace vyžadují pro spuštění ze spouštěče ověření</string>
     <string name="pref_suggestions_title">Doporučení</string>
     <string name="pref_suggestions_summary">Pro seznam aplikací a doporučení na domovské obrazovce</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">Skrýt aplikace z nedávných</string>
+    <string name="recents_apps_help">Nápověda</string>
+    <string name="recents_visibility_visible">Viditelné</string>
+    <string name="recents_visibility_content_hidden">Obsah skryt</string>
+    <string name="recents_visibility_fully_hidden">Úplně skryté</string>
+    <string name="recents_apps_info_visible">Viditelné: aplikace a její snímek obrazovky se zobrazují v nedávných</string>
+    <string name="recents_apps_info_content_hidden">Obsah skryt: aplikace se zobrazuje v nedávných, ale její snímek obrazovky je skryt</string>
+    <string name="recents_apps_info_fully_hidden">Úplně skryté: aplikace je skryta z nedávných</string>
 </resources>

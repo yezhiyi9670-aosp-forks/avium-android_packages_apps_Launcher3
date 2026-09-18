@@ -39,4 +39,13 @@
     <string name="trust_apps_info_protected">保護アプリはランチャーから開くのに認証が必要です</string>
     <string name="pref_suggestions_title">おすすめ</string>
     <string name="pref_suggestions_summary">アプリドロワーとホーム画面のサジェスト</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">最近のアプリから非表示にする</string>
+    <string name="recents_apps_help">ヘルプ</string>
+    <string name="recents_visibility_visible">表示</string>
+    <string name="recents_visibility_content_hidden">内容を非表示</string>
+    <string name="recents_visibility_fully_hidden">完全に非表示</string>
+    <string name="recents_apps_info_visible">表示：アプリとそのスクリーンショットが最近のアプリに表示されます</string>
+    <string name="recents_apps_info_content_hidden">内容を非表示：アプリは最近のアプリに表示されますが、スクリーンショットは非表示になります</string>
+    <string name="recents_apps_info_fully_hidden">完全に非表示：アプリは最近のアプリに表示されなくなります</string>
 </resources>

@@ -31,4 +31,13 @@
     <string name="trust_apps_help">Ohje</string>
     <string name="trust_apps_info_hidden">Piilotetut sovellukset ja niiden widgetit piilotetaan valikosta</string>
     <string name="trust_apps_info_protected">Suojatut sovellukset tarvitsevat todennuksen jotta ne voidaan avata</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">Piilota sovellukset viimeisimmistä</string>
+    <string name="recents_apps_help">Ohje</string>
+    <string name="recents_visibility_visible">Näkyvissä</string>
+    <string name="recents_visibility_content_hidden">Sisältö piilotettu</string>
+    <string name="recents_visibility_fully_hidden">Kokonaan piilotettu</string>
+    <string name="recents_apps_info_visible">Näkyvissä: sovellus ja sen kuvakaappaus näkyvät viimeisimmissä</string>
+    <string name="recents_apps_info_content_hidden">Sisältö piilotettu: sovellus näkyy viimeisimmissä, mutta sen kuvakaappaus on piilotettu</string>
+    <string name="recents_apps_info_fully_hidden">Kokonaan piilotettu: sovellus on piilotettu viimeisimmistä</string>
 </resources>

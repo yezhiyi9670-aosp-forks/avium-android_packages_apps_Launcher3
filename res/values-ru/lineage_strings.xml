@@ -39,4 +39,13 @@
     <string name="trust_apps_info_protected">Для открытия защищенных приложений из лаунчера требуется аутентификация</string>
     <string name="pref_suggestions_title">Предложения</string>
     <string name="pref_suggestions_summary">Для панели приложений и предложений на главном экране</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">Скрыть приложения из недавних</string>
+    <string name="recents_apps_help">Помощь</string>
+    <string name="recents_visibility_visible">Видно</string>
+    <string name="recents_visibility_content_hidden">Содержимое скрыто</string>
+    <string name="recents_visibility_fully_hidden">Полностью скрыто</string>
+    <string name="recents_apps_info_visible">Видно: приложение и его снимок экрана отображаются в недавних</string>
+    <string name="recents_apps_info_content_hidden">Содержимое скрыто: приложение отображается в недавних, но его снимок экрана скрыт</string>
+    <string name="recents_apps_info_fully_hidden">Полностью скрыто: приложение скрыто из недавних</string>
 </resources>

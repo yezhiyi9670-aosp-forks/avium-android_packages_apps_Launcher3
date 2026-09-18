@@ -46,4 +46,13 @@
     <string name="tapered_rect_shape_title">Hình chữ nhật vát</string>
     <string name="teardrop_shape_title">Giọt nước</string>
     <string name="rounded_rect_shape_title">Hình chữ nhật bo tròn</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">Ẩn ứng dụng khỏi gần đây</string>
+    <string name="recents_apps_help">Trợ giúp</string>
+    <string name="recents_visibility_visible">Hiển thị</string>
+    <string name="recents_visibility_content_hidden">Nội dung bị ẩn</string>
+    <string name="recents_visibility_fully_hidden">Ẩn hoàn toàn</string>
+    <string name="recents_apps_info_visible">Hiển thị: ứng dụng và ảnh chụp màn hình của ứng dụng xuất hiện trong gần đây</string>
+    <string name="recents_apps_info_content_hidden">Nội dung bị ẩn: ứng dụng xuất hiện trong gần đây, nhưng ảnh chụp màn hình của ứng dụng bị ẩn</string>
+    <string name="recents_apps_info_fully_hidden">Ẩn hoàn toàn: ứng dụng bị ẩn khỏi gần đây</string>
 </resources>

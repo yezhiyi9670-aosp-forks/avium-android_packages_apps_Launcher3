@@ -46,4 +46,13 @@
     <string name="tapered_rect_shape_title">Trapez</string>
     <string name="teardrop_shape_title">Tropfen</string>
     <string name="rounded_rect_shape_title">Abgerundetes Rechteck</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">Apps aus „Zuletzt verwendet“ ausblenden</string>
+    <string name="recents_apps_help">Hilfe</string>
+    <string name="recents_visibility_visible">Sichtbar</string>
+    <string name="recents_visibility_content_hidden">Inhalt ausgeblendet</string>
+    <string name="recents_visibility_fully_hidden">Vollständig ausgeblendet</string>
+    <string name="recents_apps_info_visible">Sichtbar: Die App und ihr Screenshot werden in „Zuletzt verwendet“ angezeigt</string>
+    <string name="recents_apps_info_content_hidden">Inhalt ausgeblendet: Die App wird in „Zuletzt verwendet“ angezeigt, ihr Screenshot ist jedoch ausgeblendet</string>
+    <string name="recents_apps_info_fully_hidden">Vollständig ausgeblendet: Die App wird aus „Zuletzt verwendet“ ausgeblendet</string>
 </resources>

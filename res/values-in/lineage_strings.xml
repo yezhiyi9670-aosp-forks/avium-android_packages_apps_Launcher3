@@ -42,4 +42,13 @@
     <string name="tapered_rect_shape_title">Persegi panjang meruncing</string>
     <string name="teardrop_shape_title">Tetesan air</string>
     <string name="rounded_rect_shape_title">Persegi panjang membulat</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">Sembunyikan aplikasi dari yang terbaru</string>
+    <string name="recents_apps_help">Bantuan</string>
+    <string name="recents_visibility_visible">Terlihat</string>
+    <string name="recents_visibility_content_hidden">Konten disembunyikan</string>
+    <string name="recents_visibility_fully_hidden">Sepenuhnya disembunyikan</string>
+    <string name="recents_apps_info_visible">Terlihat: aplikasi dan tangkapan layarnya muncul di yang terbaru</string>
+    <string name="recents_apps_info_content_hidden">Konten disembunyikan: aplikasi muncul di yang terbaru, tetapi tangkapan layarnya disembunyikan</string>
+    <string name="recents_apps_info_fully_hidden">Sepenuhnya disembunyikan: aplikasi disembunyikan dari yang terbaru</string>
 </resources>

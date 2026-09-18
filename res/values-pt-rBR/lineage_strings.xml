@@ -41,4 +41,13 @@
     <string name="pref_suggestions_summary">Para sugestões na gaveta de apps e na tela inicial</string>
     <string name="pebble_shape_title">Pedrinha</string>
     <string name="pure_square_shape_title">Quadrado completo</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">Ocultar apps dos recentes</string>
+    <string name="recents_apps_help">Ajuda</string>
+    <string name="recents_visibility_visible">Visível</string>
+    <string name="recents_visibility_content_hidden">Conteúdo oculto</string>
+    <string name="recents_visibility_fully_hidden">Totalmente oculto</string>
+    <string name="recents_apps_info_visible">Visível: o app e sua captura de tela aparecem nos recentes</string>
+    <string name="recents_apps_info_content_hidden">Conteúdo oculto: o app aparece nos recentes, mas sua captura de tela é ocultada</string>
+    <string name="recents_apps_info_fully_hidden">Totalmente oculto: o app é ocultado dos recentes</string>
 </resources>

@@ -57,4 +57,13 @@
     <string name="tapered_rect_shape_title">八边形</string>
     <string name="teardrop_shape_title">泪珠形</string>
     <string name="rounded_rect_shape_title">圆角矩形</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">从最近任务中隐藏应用</string>
+    <string name="recents_apps_help">帮助</string>
+    <string name="recents_visibility_visible">可见</string>
+    <string name="recents_visibility_content_hidden">内容隐藏</string>
+    <string name="recents_visibility_fully_hidden">完全隐藏</string>
+    <string name="recents_apps_info_visible">可见：应用及其截图会显示在最近任务中</string>
+    <string name="recents_apps_info_content_hidden">内容隐藏：应用会显示在最近任务中，但其截图会被隐藏</string>
+    <string name="recents_apps_info_fully_hidden">完全隐藏：应用会从最近任务中隐藏</string>
 </resources>

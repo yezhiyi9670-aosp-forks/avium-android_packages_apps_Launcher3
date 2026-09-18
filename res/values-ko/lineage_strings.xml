@@ -37,4 +37,13 @@
     <string name="trust_apps_info_protected">보호된 앱을 실행기에서 열려면 인증이 필요합니다.</string>
     <string name="pref_suggestions_title">제안</string>
     <string name="pref_suggestions_summary">앱 서랍 및 홈 화면 제안</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">최근 앱에서 앱 숨기기</string>
+    <string name="recents_apps_help">도움말</string>
+    <string name="recents_visibility_visible">표시</string>
+    <string name="recents_visibility_content_hidden">콘텐츠 숨김</string>
+    <string name="recents_visibility_fully_hidden">완전히 숨김</string>
+    <string name="recents_apps_info_visible">표시: 앱과 스크린샷이 최근 앱에 표시됩니다</string>
+    <string name="recents_apps_info_content_hidden">콘텐츠 숨김: 앱은 최근 앱에 표시되지만 스크린샷은 숨겨집니다</string>
+    <string name="recents_apps_info_fully_hidden">완전히 숨김: 앱이 최근 앱에서 숨겨집니다</string>
 </resources>

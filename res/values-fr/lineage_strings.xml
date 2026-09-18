@@ -37,4 +37,13 @@
     <string name="trust_apps_info_protected">Les applications protégées nécessitent une authentification pour être ouvertes depuis le lanceur</string>
     <string name="pref_suggestions_title">Suggestions</string>
     <string name="pref_suggestions_summary">Pour les suggestions du tiroir d\'applications et de l\'écran d\'accueil</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">Masquer des applications dans les applis récentes</string>
+    <string name="recents_apps_help">Aide</string>
+    <string name="recents_visibility_visible">Visible</string>
+    <string name="recents_visibility_content_hidden">Contenu masqué</string>
+    <string name="recents_visibility_fully_hidden">Entièrement masquée</string>
+    <string name="recents_apps_info_visible">Visible : l\'application et sa capture d\'écran apparaissent dans les applis récentes</string>
+    <string name="recents_apps_info_content_hidden">Contenu masqué : l\'application apparaît dans les applis récentes, mais sa capture d\'écran est masquée</string>
+    <string name="recents_apps_info_fully_hidden">Entièrement masquée : l\'application est masquée des applis récentes</string>
 </resources>

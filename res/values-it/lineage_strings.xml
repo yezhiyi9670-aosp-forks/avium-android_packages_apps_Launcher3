@@ -44,4 +44,13 @@
     <string name="tapered_rect_shape_title">Quadrato senza angoli</string>
     <string name="teardrop_shape_title">Goccia</string>
     <string name="rounded_rect_shape_title">Quadrato arrotondato</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">Nascondi app dalle recenti</string>
+    <string name="recents_apps_help">Aiuto</string>
+    <string name="recents_visibility_visible">Visibile</string>
+    <string name="recents_visibility_content_hidden">Contenuto nascosto</string>
+    <string name="recents_visibility_fully_hidden">Completamente nascosta</string>
+    <string name="recents_apps_info_visible">Visibile: l\'app e la sua anteprima compaiono nelle recenti</string>
+    <string name="recents_apps_info_content_hidden">Contenuto nascosto: l\'app compare nelle recenti, ma la sua anteprima è nascosta</string>
+    <string name="recents_apps_info_fully_hidden">Completamente nascosta: l\'app è nascosta dalle recenti</string>
 </resources>

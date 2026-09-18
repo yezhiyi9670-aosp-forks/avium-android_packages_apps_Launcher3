@@ -30,4 +30,13 @@
     <string name="trust_apps_info_protected">Beskyttede apps kræver godkendelse, for at blive åbnet fra starteren</string>
     <string name="pref_suggestions_title">Forslag</string>
     <string name="pref_suggestions_summary">For til app-skuffe &amp; startskærms forslag</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">Skjul apps i seneste</string>
+    <string name="recents_apps_help">Hjælp</string>
+    <string name="recents_visibility_visible">Synlig</string>
+    <string name="recents_visibility_content_hidden">Indhold skjult</string>
+    <string name="recents_visibility_fully_hidden">Helt skjult</string>
+    <string name="recents_apps_info_visible">Synlig: appen og dens skærmbillede vises i seneste</string>
+    <string name="recents_apps_info_content_hidden">Indhold skjult: appen vises i seneste, men dens skærmbillede er skjult</string>
+    <string name="recents_apps_info_fully_hidden">Helt skjult: appen er skjult i seneste</string>
 </resources>

@@ -46,4 +46,13 @@
     <string name="tapered_rect_shape_title">Przycięty kwadrat</string>
     <string name="teardrop_shape_title">Łza</string>
     <string name="rounded_rect_shape_title">Zaokrąglony kwadrat</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">Ukryj aplikacje na liście ostatnich</string>
+    <string name="recents_apps_help">Pomoc</string>
+    <string name="recents_visibility_visible">Widoczne</string>
+    <string name="recents_visibility_content_hidden">Treść ukryta</string>
+    <string name="recents_visibility_fully_hidden">Całkowicie ukryte</string>
+    <string name="recents_apps_info_visible">Widoczne: aplikacja i jej zrzut ekranu są widoczne na liście ostatnich</string>
+    <string name="recents_apps_info_content_hidden">Treść ukryta: aplikacja jest widoczna na liście ostatnich, ale jej zrzut ekranu jest ukryty</string>
+    <string name="recents_apps_info_fully_hidden">Całkowicie ukryte: aplikacja jest ukryta na liście ostatnich</string>
 </resources>

@@ -46,4 +46,13 @@
     <string name="tapered_rect_shape_title">Trapéz-szerű</string>
     <string name="teardrop_shape_title">Könnycsepp</string>
     <string name="rounded_rect_shape_title">Kerekített téglalap</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">Alkalmazások elrejtése a legutóbbiakból</string>
+    <string name="recents_apps_help">Súgó</string>
+    <string name="recents_visibility_visible">Látható</string>
+    <string name="recents_visibility_content_hidden">Tartalom elrejtve</string>
+    <string name="recents_visibility_fully_hidden">Teljesen elrejtve</string>
+    <string name="recents_apps_info_visible">Látható: az alkalmazás és a képernyőképe megjelenik a legutóbbiakban</string>
+    <string name="recents_apps_info_content_hidden">Tartalom elrejtve: az alkalmazás megjelenik a legutóbbiakban, de a képernyőképe el van rejtve</string>
+    <string name="recents_apps_info_fully_hidden">Teljesen elrejtve: az alkalmazás el van rejtve a legutóbbiakból</string>
 </resources>

@@ -30,4 +30,13 @@
     <string name="trust_apps_help">วิธีใช้</string>
     <string name="trust_apps_info_hidden">แอปที่ถูกซ่อนและ widget ของแอพนั้นถูกซ่อนจากตัวเลือกแอป</string>
     <string name="trust_apps_info_protected">แอปที่ได้รับการป้องกัน จะต้องได้รับการยืนยันเพื่อที่จะเปิดจากตัว launcher</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">ซ่อนแอปจากรายการล่าสุด</string>
+    <string name="recents_apps_help">วิธีใช้</string>
+    <string name="recents_visibility_visible">แสดง</string>
+    <string name="recents_visibility_content_hidden">ซ่อนเนื้อหา</string>
+    <string name="recents_visibility_fully_hidden">ซ่อนทั้งหมด</string>
+    <string name="recents_apps_info_visible">แสดง: แอปและภาพหน้าจอจะปรากฏในรายการล่าสุด</string>
+    <string name="recents_apps_info_content_hidden">ซ่อนเนื้อหา: แอปจะปรากฏในรายการล่าสุด แต่ภาพหน้าจอจะถูกซ่อน</string>
+    <string name="recents_apps_info_fully_hidden">ซ่อนทั้งหมด: แอปจะถูกซ่อนจากรายการล่าสุด</string>
 </resources>

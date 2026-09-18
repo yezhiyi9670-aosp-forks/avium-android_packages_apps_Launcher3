@@ -46,4 +46,13 @@
     <string name="tapered_rect_shape_title">Rectángulo cónico</string>
     <string name="teardrop_shape_title">Gota</string>
     <string name="rounded_rect_shape_title">Rectángulo redondeado</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">Ocultar aplicaciones de las recientes</string>
+    <string name="recents_apps_help">Ayuda</string>
+    <string name="recents_visibility_visible">Visible</string>
+    <string name="recents_visibility_content_hidden">Contenido oculto</string>
+    <string name="recents_visibility_fully_hidden">Totalmente oculta</string>
+    <string name="recents_apps_info_visible">Visible: la aplicación y su captura de pantalla aparecen en las recientes</string>
+    <string name="recents_apps_info_content_hidden">Contenido oculto: la aplicación aparece en las recientes, pero su captura de pantalla está oculta</string>
+    <string name="recents_apps_info_fully_hidden">Totalmente oculta: la aplicación se oculta de las recientes</string>
 </resources>

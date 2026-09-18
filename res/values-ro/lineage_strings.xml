@@ -46,4 +46,13 @@
     <string name="tapered_rect_shape_title">Dreptunghi conic</string>
     <string name="teardrop_shape_title">Lacrimă</string>
     <string name="rounded_rect_shape_title">Dreptunghi rotund</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">Ascunde aplicațiile din recente</string>
+    <string name="recents_apps_help">Ajutor</string>
+    <string name="recents_visibility_visible">Vizibil</string>
+    <string name="recents_visibility_content_hidden">Conținut ascuns</string>
+    <string name="recents_visibility_fully_hidden">Complet ascuns</string>
+    <string name="recents_apps_info_visible">Vizibil: aplicația și captura sa de ecran apar în recente</string>
+    <string name="recents_apps_info_content_hidden">Conținut ascuns: aplicația apare în recente, dar captura sa de ecran este ascunsă</string>
+    <string name="recents_apps_info_fully_hidden">Complet ascuns: aplicația este ascunsă din recente</string>
 </resources>

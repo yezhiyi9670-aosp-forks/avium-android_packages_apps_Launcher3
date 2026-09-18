@@ -45,4 +45,13 @@
     <string name="paused_apps_drop_target_label">暫停應用</string>
     <string name="recent_task_option_kill_app">強行停止</string>
     <string name="recents_app_killed">應用已強行停止</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">從最近任務中隱藏應用程式</string>
+    <string name="recents_apps_help">說明</string>
+    <string name="recents_visibility_visible">可見</string>
+    <string name="recents_visibility_content_hidden">內容隱藏</string>
+    <string name="recents_visibility_fully_hidden">完全隱藏</string>
+    <string name="recents_apps_info_visible">可見：應用程式及其螢幕截圖會顯示在最近任務中</string>
+    <string name="recents_apps_info_content_hidden">內容隱藏：應用程式會顯示在最近任務中，但其螢幕截圖會被隱藏</string>
+    <string name="recents_apps_info_fully_hidden">完全隱藏：應用程式會從最近任務中隱藏</string>
 </resources>

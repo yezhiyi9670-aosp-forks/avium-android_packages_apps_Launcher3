@@ -37,4 +37,13 @@
     <string name="trust_apps_info_protected">Korunan uygulamaların başlatıcıdan açılması için kimlik doğrulama gerekir</string>
     <string name="pref_suggestions_title">Öneriler</string>
     <string name="pref_suggestions_summary">Uygulama çekmecesi ve ana ekran önerileri için</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">Uygulamaları son kullanılanlardan gizle</string>
+    <string name="recents_apps_help">Yardım</string>
+    <string name="recents_visibility_visible">Görünür</string>
+    <string name="recents_visibility_content_hidden">İçerik gizli</string>
+    <string name="recents_visibility_fully_hidden">Tamamen gizli</string>
+    <string name="recents_apps_info_visible">Görünür: uygulama ve ekran görüntüsü son kullanılanlarda görünür</string>
+    <string name="recents_apps_info_content_hidden">İçerik gizli: uygulama son kullanılanlarda görünür, ancak ekran görüntüsü gizlidir</string>
+    <string name="recents_apps_info_fully_hidden">Tamamen gizli: uygulama son kullanılanlardan gizlenir</string>
 </resources>

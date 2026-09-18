@@ -37,4 +37,13 @@
     <string name="trust_apps_info_protected">Οι προστατευόμενες εφαρμογές απαιτούν έλεγχο ταυτότητας για να ανοιχτούν από την αρχική σελίδα η το συρτάρι</string>
     <string name="pref_suggestions_title">Προτάσεις</string>
     <string name="pref_suggestions_summary">Εμφάνιση προτεινόμενων εφαρμογών στο συρτάρι &amp; την αρχική οθόνη</string>
+    <!-- Hide apps from recents -->
+    <string name="recents_apps_manager_name">Απόκρυψη εφαρμογών από τις πρόσφατες</string>
+    <string name="recents_apps_help">Βοήθεια</string>
+    <string name="recents_visibility_visible">Ορατή</string>
+    <string name="recents_visibility_content_hidden">Περιεχόμενο κρυφό</string>
+    <string name="recents_visibility_fully_hidden">Πλήρως κρυφή</string>
+    <string name="recents_apps_info_visible">Ορατή: η εφαρμογή και το στιγμιότυπό της εμφανίζονται στις πρόσφατες</string>
+    <string name="recents_apps_info_content_hidden">Περιεχόμενο κρυφό: η εφαρμογή εμφανίζεται στις πρόσφατες, αλλά το στιγμιότυπό της είναι κρυφό</string>
+    <string name="recents_apps_info_fully_hidden">Πλήρως κρυφή: η εφαρμογή κρύβεται από τις πρόσφατες</string>
 </resources>
