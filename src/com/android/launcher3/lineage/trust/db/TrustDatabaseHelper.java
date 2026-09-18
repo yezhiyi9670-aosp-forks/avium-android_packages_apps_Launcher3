@@ -24,9 +24,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class TrustDatabaseHelper extends SQLiteOpenHelper {
@@ -293,6 +296,57 @@ public class TrustDatabaseHelper extends SQLiteOpenHelper {
         }
 
         return result;
+    }
+
+    /** Returns the set of package names that currently have a configuration entry. */
+    @NonNull
+    public Set<String> getPackages() {
+        final Set<String> packages = new HashSet<>();
+        final String query = String.format("SELECT %s FROM %s", KEY_PKGNAME, TABLE_NAME);
+        final Cursor cursor = getReadableDatabase().rawQuery(query, null);
+        try {
+            while (cursor.moveToNext()) {
+                packages.add(cursor.getString(0));
+            }
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+
+        return packages;
+    }
+
+    /** Deletes the configuration entries for the given packages. */
+    public void deletePackages(@NonNull Collection<String> packageNames) {
+        if (packageNames.isEmpty()) {
+            return;
+        }
+
+        final StringBuilder placeholders = new StringBuilder();
+        final String[] args = new String[packageNames.size()];
+        int index = 0;
+        for (String packageName : packageNames) {
+            if (index > 0) {
+                placeholders.append(',');
+            }
+            placeholders.append('?');
+            args[index++] = packageName;
+        }
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+
+        try {
+            db.delete(TABLE_NAME, KEY_PKGNAME + " IN (" + placeholders + ")", args);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            // Ignored
+        } finally {
+            db.endTransaction();
+        }
+
+        notifyChanged();
     }
 
     public void addOnChangeListener(@NonNull OnChangeListener listener) {

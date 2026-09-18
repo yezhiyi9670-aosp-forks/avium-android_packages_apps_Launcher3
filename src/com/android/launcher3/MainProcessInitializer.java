@@ -32,7 +32,10 @@ import android.util.Log;
 
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.graphics.BitmapCreationCheck;
+import com.android.launcher3.lineage.trust.TrustDatabaseReconciler;
 import com.android.launcher3.logging.FileLog;
+import com.android.launcher3.util.Executors;
+import com.android.launcher3.util.LockedUserState;
 
 import javax.inject.Inject;
 
@@ -107,5 +110,10 @@ public class MainProcessInitializer {
                 }
             });
         }
+
+        // Drop trust configuration for packages that are no longer installed on any profile.
+        LockedUserState.get(context).runOnUserUnlocked(() ->
+                Executors.MODEL_EXECUTOR.execute(() ->
+                        TrustDatabaseReconciler.reconcile(context.getApplicationContext())));
     }
 }
