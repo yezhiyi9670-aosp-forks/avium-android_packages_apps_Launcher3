@@ -23,9 +23,9 @@ import android.platform.test.rule.AllowedDevices
 import android.platform.test.rule.DeviceProduct
 import android.platform.test.rule.LimitDevicesRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android.launcher3.AppFilter
 import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.icons.IconCache
+import com.android.launcher3.lineage.trust.HiddenAppsFilter
 import com.android.launcher3.model.data.PackageItemInfo
 import com.android.launcher3.pm.UserCache
 import com.android.launcher3.util.ComponentKey
@@ -107,7 +107,7 @@ class WidgetsModelTest {
         val userCache = spy(UserCache.INSTANCE.get(context))
         whenever(userCache.userProfiles).thenReturn(listOf(UserHandle.CURRENT))
 
-        underTest = WidgetsModel(context, idp, iconCacheMock, AppFilter(context))
+        underTest = WidgetsModel(context, idp, iconCacheMock, HiddenAppsFilter(context))
     }
 
     @Test

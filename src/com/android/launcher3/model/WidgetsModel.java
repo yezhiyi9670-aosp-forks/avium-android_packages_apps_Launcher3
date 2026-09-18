@@ -82,7 +82,7 @@ public class WidgetsModel {
             @ApplicationContext Context context,
             InvariantDeviceProfile idp,
             IconCache iconCache,
-            AppFilter appFilter) {
+            HiddenAppsFilter appFilter) {
         mContext = context;
         mIdp = idp;
         mIconCache = iconCache;
