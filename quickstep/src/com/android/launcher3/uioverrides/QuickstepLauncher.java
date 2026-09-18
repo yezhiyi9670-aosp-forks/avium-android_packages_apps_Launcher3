@@ -248,7 +248,7 @@ import com.android.wm.shell.shared.desktopmode.DesktopModeStatus;
 import com.android.wm.shell.shared.desktopmode.DesktopState;
 
 import org.avium.launcher.FolderDepthController;
-import org.avium.launcher.anim.WorkspaceAnimator;
+import org.avium.launcher.blur.LauncherBlurArbiter;
 
 import kotlin.Unit;
 
@@ -281,7 +281,7 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
     private PredictedContainerInfo mAllAppsPredictions;
     private HotseatPredictionController mHotseatPredictionController;
     private DepthController mDepthController;
-    private WorkspaceAnimator mFolderWorkspaceAnimator;
+    private LauncherBlurArbiter mBlurArbiter;
     private QuickstepTransitionManager mAppTransitionManager;
 
     private OverviewActionsView<?> mActionsView;
@@ -1380,11 +1380,11 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
     }
 
     @Override
-    public void animateFolderBlur(boolean show) {
-        if (mFolderWorkspaceAnimator == null) {
-            mFolderWorkspaceAnimator = new WorkspaceAnimator(this);
+    public LauncherBlurArbiter getBlurArbiter() {
+        if (mBlurArbiter == null) {
+            mBlurArbiter = new LauncherBlurArbiter(this);
         }
-        mFolderWorkspaceAnimator.animateBlur(show, null);
+        return mBlurArbiter;
     }
 
     @Nullable

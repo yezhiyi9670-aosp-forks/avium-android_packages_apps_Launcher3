@@ -936,6 +936,9 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
         int size = getIconsInReadingOrder().size();
         if (size <= 1) {
             Log.d(TAG, "Couldn't animate folder closed because there's " + size + " icons");
+            // There is no close animation to carry the depth reset, so release the folder's blur
+            // source explicitly (e.g. collapsing after dragging out the second-to-last item).
+            AviumFolderDepthAnimator.setDepth(mActivityContext, 0f);
             closeComplete(false);
             post(this::announceAccessibilityChanges);
             return;

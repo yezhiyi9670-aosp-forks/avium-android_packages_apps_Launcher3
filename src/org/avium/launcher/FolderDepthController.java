@@ -18,8 +18,10 @@ package org.avium.launcher;
 
 import com.android.launcher3.util.MultiPropertyFactory.MultiProperty;
 
+import org.avium.launcher.blur.LauncherBlurArbiter;
+
 public interface FolderDepthController {
     MultiProperty getFolderDepthProperty();
 
-    void animateFolderBlur(boolean show);
+    LauncherBlurArbiter getBlurArbiter();
 }

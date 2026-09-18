@@ -18,16 +18,13 @@ package org.avium.launcher.anim;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
-import android.graphics.RenderEffect;
-import android.graphics.Shader;
-import android.view.View;
 
 import com.android.launcher3.Launcher;
 import com.android.launcher3.Workspace;
 import com.android.launcher3.uioverrides.QuickstepLauncher;
 import com.android.launcher3.statehandlers.DepthController;
 
-import java.util.List;
+import org.avium.launcher.blur.LauncherBlurArbiter;
 
 public class WorkspaceAnimator {
 
@@ -45,10 +42,6 @@ public class WorkspaceAnimator {
 
     public void animate(boolean show, Runnable onEnd) {
         animate(show, onEnd, true);
-    }
-
-    public void animateBlur(boolean show, Runnable onEnd) {
-        animate(show, onEnd, false);
     }
 
     private void animate(boolean show, Runnable onEnd, boolean scaleWorkspace) {
@@ -114,17 +107,9 @@ public class WorkspaceAnimator {
     }
 
     private void applyBlur(float blurRadius) {
-        List<View> blurTargets = mLauncher.getDepthBlurTargets();
-        if (blurTargets == null || blurTargets.isEmpty()) return;
-
-        RenderEffect blurEffect = blurRadius > 0
-                ? RenderEffect.createBlurEffect(blurRadius, blurRadius, Shader.TileMode.CLAMP)
-                : null;
-
-        for (View target : blurTargets) {
-            if (target != null) {
-                target.setRenderEffect(blurEffect);
-            }
+        if (mLauncher instanceof QuickstepLauncher) {
+            ((QuickstepLauncher) mLauncher).getBlurArbiter()
+                    .setSourceBlur(LauncherBlurArbiter.SOURCE_OVERLAY, blurRadius);
         }
     }
 }

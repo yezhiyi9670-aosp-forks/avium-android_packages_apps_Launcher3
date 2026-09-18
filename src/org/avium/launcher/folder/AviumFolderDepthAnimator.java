@@ -18,17 +18,21 @@ package org.avium.launcher.folder;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
+import android.animation.ValueAnimator;
 import android.content.res.Resources;
+import android.view.animation.DecelerateInterpolator;
 
 import com.android.launcher3.R;
 import com.android.launcher3.util.MultiPropertyFactory.MultiProperty;
 import com.android.launcher3.views.ActivityContext;
 
 import org.avium.launcher.FolderDepthController;
+import org.avium.launcher.blur.LauncherBlurArbiter;
 
 public final class AviumFolderDepthAnimator {
 
     private static final float OPEN_FOLDER_DEPTH = 0.3f;
+    private static final float OPEN_FOLDER_CONTENT_BLUR = 60f;
 
     public static void addAnimator(
             AnimatorSet animatorSet, ActivityContext activityContext, Resources resources,
@@ -37,12 +41,28 @@ public final class AviumFolderDepthAnimator {
         if (folderDepthController == null) {
             return;
         }
-        folderDepthController.animateFolderBlur(isOpening);
+        int duration = resources.getInteger(R.integer.config_materialFolderExpandDuration);
+        DecelerateInterpolator interpolator = new DecelerateInterpolator();
+
+        // Wallpaper/background channel: the folder only contributes via folderDepth, which the
+        // depth controller reduces (max) together with the drag/state depths.
         MultiProperty folderDepth = folderDepthController.getFolderDepthProperty();
         Animator depthAnimator = folderDepth.animateToValue(isOpening ? OPEN_FOLDER_DEPTH : 0f);
-        depthAnimator.setDuration(resources.getInteger(
-                R.integer.config_materialFolderExpandDuration));
-        animatorSet.play(depthAnimator);
+        depthAnimator.setDuration(duration);
+        depthAnimator.setInterpolator(interpolator);
+
+        // Content channel: animate the folder source of the shared blur arbiter.
+        LauncherBlurArbiter arbiter = folderDepthController.getBlurArbiter();
+        float startBlur = arbiter.getSourceBlur(LauncherBlurArbiter.SOURCE_FOLDER);
+        float targetBlur = isOpening ? OPEN_FOLDER_CONTENT_BLUR : 0f;
+        ValueAnimator contentBlurAnimator = ValueAnimator.ofFloat(startBlur, targetBlur);
+        contentBlurAnimator.setDuration(duration);
+        contentBlurAnimator.setInterpolator(interpolator);
+        contentBlurAnimator.addUpdateListener(animation ->
+                arbiter.setSourceBlur(LauncherBlurArbiter.SOURCE_FOLDER,
+                        (float) animation.getAnimatedValue()));
+
+        animatorSet.play(depthAnimator).with(contentBlurAnimator);
     }
 
     public static void setDepth(ActivityContext activityContext, float depth) {
@@ -50,9 +70,9 @@ public final class AviumFolderDepthAnimator {
         if (folderDepthController == null) {
             return;
         }
-        folderDepthController.animateFolderBlur(depth > 0f);
-        MultiProperty folderDepth = folderDepthController.getFolderDepthProperty();
-        folderDepth.setValue(depth);
+        folderDepthController.getFolderDepthProperty().setValue(depth);
+        folderDepthController.getBlurArbiter().setSourceBlur(LauncherBlurArbiter.SOURCE_FOLDER,
+                depth > 0f ? OPEN_FOLDER_CONTENT_BLUR : 0f);
     }
 
     private static FolderDepthController getFolderDepthController(ActivityContext activityContext) {

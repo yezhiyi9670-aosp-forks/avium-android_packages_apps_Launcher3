@@ -20,8 +20,6 @@ import static android.os.Trace.TRACE_TAG_APP;
 import static com.android.launcher3.Flags.enableOverviewBackgroundWallpaperBlur;
 
 import android.app.WallpaperManager;
-import android.graphics.RenderEffect;
-import android.graphics.Shader;
 import android.gui.EarlyWakeupInfo;
 import android.os.Binder;
 import android.os.IBinder;
@@ -47,6 +45,8 @@ import com.android.launcher3.uioverrides.QuickstepLauncher;
 import com.android.launcher3.util.MultiPropertyFactory;
 import com.android.launcher3.util.MultiPropertyFactory.MultiProperty;
 import com.android.systemui.shared.system.BlurUtils;
+
+import org.avium.launcher.blur.LauncherBlurArbiter;
 
 /**
  * Utility class for applying depth effect
@@ -322,16 +322,16 @@ public class BaseDepthController {
         boolean shouldBlurWorkspace =
                 stateManager.getCurrentStableState().shouldBlurWorkspace(targetState);
 
-        RenderEffect blurEffect = shouldBlurWorkspace && mCurrentBlur > 0
-                ? RenderEffect.createBlurEffect(mCurrentBlur, mCurrentBlur, Shader.TileMode.DECAL)
-                // If blur is not desired, clear the blur effect from the depth targets.
-                : null;
+        // The content blur is arbitrated with the other sources (folder, overlay) so that a state
+        // change cannot clear a blur that another source still owns.
+        float contentBlur = shouldBlurWorkspace && mCurrentBlur > 0 ? mCurrentBlur : 0f;
         Log.d(TAG, "shouldBlurWorkspace: " + shouldBlurWorkspace
                 + " targetState: " + targetState
                 + " currentStableState: " + stateManager.getCurrentStableState()
                 + " mCurrentBlur: " + mCurrentBlur
-                + " mLauncher.getDepthBlurTargets(): " + mLauncher.getDepthBlurTargets());
-        mLauncher.getDepthBlurTargets().forEach(target -> target.setRenderEffect(blurEffect));
+                + " contentBlur: " + contentBlur);
+        mLauncher.getBlurArbiter().setSourceBlur(
+                LauncherBlurArbiter.SOURCE_STATE, contentBlur);
         return shouldBlurWorkspace;
     }
 
