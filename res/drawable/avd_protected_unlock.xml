@@ -41,7 +41,7 @@
         <aapt:attr name="android:animation">
             <objectAnimator
                 android:name="group"
-                android:duration="350"
+                android:duration="250"
                 android:interpolator="@android:anim/accelerate_decelerate_interpolator"
                 android:propertyName="scaleY"
                 android:valueFrom="1"
