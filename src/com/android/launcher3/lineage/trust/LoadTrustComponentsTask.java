@@ -90,7 +90,14 @@ public class LoadTrustComponentsTask extends AsyncTask<Void, Integer, List<Trust
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Collections.sort(list, (a, b) -> a.getLabel().compareTo(b.getLabel()));
+            Collections.sort(list, (a, b) -> {
+                final boolean aAffected = a.isHidden() || a.isProtected();
+                final boolean bAffected = b.isHidden() || b.isProtected();
+                if (aAffected != bAffected) {
+                    return aAffected ? -1 : 1;
+                }
+                return a.getLabel().compareTo(b.getLabel());
+            });
         }
 
         return list;

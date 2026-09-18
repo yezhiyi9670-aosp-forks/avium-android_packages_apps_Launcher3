@@ -90,7 +90,14 @@ public class LoadRecentsComponentsTask
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Collections.sort(list, (a, b) -> a.getLabel().compareTo(b.getLabel()));
+            Collections.sort(list, (a, b) -> {
+                final boolean aAffected = a.getVisibility() != RecentsComponent.VISIBLE;
+                final boolean bAffected = b.getVisibility() != RecentsComponent.VISIBLE;
+                if (aAffected != bAffected) {
+                    return aAffected ? -1 : 1;
+                }
+                return a.getLabel().compareTo(b.getLabel());
+            });
         }
 
         return list;

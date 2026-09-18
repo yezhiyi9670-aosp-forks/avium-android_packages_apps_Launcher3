@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,9 +35,12 @@ import com.android.launcher3.lineage.trust.db.TrustComponent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 class TrustAppsAdapter extends RecyclerView.Adapter<TrustAppsAdapter.ViewHolder> {
+    private List<TrustComponent> mAllItems = new ArrayList<>();
     private List<TrustComponent> mList = new ArrayList<>();
+    private String mQuery = "";
     private Listener mListener;
     private boolean mHasSecureKeyguard;
 
@@ -46,8 +50,31 @@ class TrustAppsAdapter extends RecyclerView.Adapter<TrustAppsAdapter.ViewHolder>
     }
 
     public void update(List<TrustComponent> list) {
-        DiffUtil.DiffResult result = DiffUtil.calculateDiff(new Callback(mList, list));
-        mList = list;
+        mAllItems = list;
+        applyFilter();
+    }
+
+    public void filter(@Nullable String query) {
+        mQuery = query == null ? "" : query.trim();
+        applyFilter();
+    }
+
+    private void applyFilter() {
+        final List<TrustComponent> filtered;
+        if (mQuery.isEmpty()) {
+            filtered = mAllItems;
+        } else {
+            final String query = mQuery.toLowerCase(Locale.getDefault());
+            filtered = new ArrayList<>();
+            for (TrustComponent component : mAllItems) {
+                if (component.getLabel().toLowerCase(Locale.getDefault()).contains(query)) {
+                    filtered.add(component);
+                }
+            }
+        }
+
+        DiffUtil.DiffResult result = DiffUtil.calculateDiff(new Callback(mList, filtered));
+        mList = filtered;
         result.dispatchUpdatesTo(this);
     }
 

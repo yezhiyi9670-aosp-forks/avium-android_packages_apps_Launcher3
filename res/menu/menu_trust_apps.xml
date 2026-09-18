@@ -16,6 +16,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/menu_search"
+        android:actionViewClass="android.widget.SearchView"
+        android:icon="@drawable/ic_applist_search"
+        android:showAsAction="always|collapseActionView"
+        android:title="@string/all_apps_search_bar_hint" />
+
+    <item
         android:id="@+id/menu_trust_help"
         android:icon="@drawable/ic_help"
         android:showAsAction="always"

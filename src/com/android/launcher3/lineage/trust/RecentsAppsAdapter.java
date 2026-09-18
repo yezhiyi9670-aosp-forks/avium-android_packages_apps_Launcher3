@@ -25,6 +25,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,6 +35,7 @@ import com.android.launcher3.lineage.trust.db.RecentsComponent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 class RecentsAppsAdapter extends RecyclerView.Adapter<RecentsAppsAdapter.ViewHolder> {
     private static final @StringRes int[] VISIBILITY_LABELS = {
@@ -42,7 +44,9 @@ class RecentsAppsAdapter extends RecyclerView.Adapter<RecentsAppsAdapter.ViewHol
             R.string.recents_visibility_fully_hidden,
     };
 
+    private List<RecentsComponent> mAllItems = new ArrayList<>();
     private List<RecentsComponent> mList = new ArrayList<>();
+    private String mQuery = "";
     private Listener mListener;
 
     RecentsAppsAdapter(Listener listener) {
@@ -50,8 +54,31 @@ class RecentsAppsAdapter extends RecyclerView.Adapter<RecentsAppsAdapter.ViewHol
     }
 
     public void update(List<RecentsComponent> list) {
-        DiffUtil.DiffResult result = DiffUtil.calculateDiff(new Callback(mList, list));
-        mList = list;
+        mAllItems = list;
+        applyFilter();
+    }
+
+    public void filter(@Nullable String query) {
+        mQuery = query == null ? "" : query.trim();
+        applyFilter();
+    }
+
+    private void applyFilter() {
+        final List<RecentsComponent> filtered;
+        if (mQuery.isEmpty()) {
+            filtered = mAllItems;
+        } else {
+            final String query = mQuery.toLowerCase(Locale.getDefault());
+            filtered = new ArrayList<>();
+            for (RecentsComponent component : mAllItems) {
+                if (component.getLabel().toLowerCase(Locale.getDefault()).contains(query)) {
+                    filtered.add(component);
+                }
+            }
+        }
+
+        DiffUtil.DiffResult result = DiffUtil.calculateDiff(new Callback(mList, filtered));
+        mList = filtered;
         result.dispatchUpdatesTo(this);
     }
 
