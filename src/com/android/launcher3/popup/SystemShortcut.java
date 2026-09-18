@@ -636,6 +636,8 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
                 }
                 Intent broadcast = new Intent("org.avium.LAUNCH_BUBBLE");
                 broadcast.putExtra("package_name", packageName);
+                broadcast.putExtra(Intent.EXTRA_USER_HANDLE, mItemInfo.user.getIdentifier());
+                broadcast.setPackage("com.android.systemui");
                 broadcast.addFlags(Intent.FLAG_RECEIVER_INCLUDE_BACKGROUND);
                 Context context = view.getContext();
                 context.sendBroadcastAsUser(broadcast, UserHandle.ALL);
