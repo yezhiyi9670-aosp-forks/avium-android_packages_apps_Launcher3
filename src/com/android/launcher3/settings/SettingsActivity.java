@@ -28,16 +28,20 @@ import static com.android.launcher3.InvariantDeviceProfile.TYPE_TABLET;
 import static com.android.launcher3.states.RotationHelper.ALLOW_ROTATION_PREFERENCE_KEY;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.LauncherApps;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -59,6 +63,7 @@ import com.android.launcher3.BuildConfig;
 import com.android.launcher3.Flags;
 import com.android.launcher3.InvariantDeviceProfile;
 import com.android.launcher3.LauncherFiles;
+import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.R;
 import com.android.launcher3.lineage.LineageUtils;
 import com.android.launcher3.lineage.trust.RecentsAppsActivity;
@@ -99,6 +104,9 @@ public class SettingsActivity extends FragmentActivity
 
     private static final String KEY_SUGGESTIONS = "pref_suggestions";
     private static final String SUGGESTIONS_PACKAGE = "com.google.android.as";
+    private static final String TABLET_OVERVIEW_STYLE_PREFERENCE_KEY =
+            "pref_tablet_overview_style";
+    private static final int LAUNCHER_RESTART_DELAY_MILLIS = 500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -388,8 +396,33 @@ public class SettingsActivity extends FragmentActivity
                 case KEY_SUGGESTIONS:
                     return launcherApps != null &&
                             launcherApps.isPackageEnabled(SUGGESTIONS_PACKAGE, myUserHandle());
+                case TABLET_OVERVIEW_STYLE_PREFERENCE_KEY:
+                    preference.setOnPreferenceChangeListener((pref, newValue) -> {
+                        if (!(newValue instanceof Boolean)) {
+                            return false;
+                        }
+                        Context context = getContext();
+                        if (context == null) {
+                            return false;
+                        }
+                        LauncherPrefs.get(context).putSync(
+                                LauncherPrefs.TABLET_OVERVIEW_STYLE.to((Boolean) newValue));
+                        restartLauncherAfterPreferenceCommit();
+                        return true;
+                    });
+                    return true;
             }
             return true;
+        }
+
+        private void restartLauncherAfterPreferenceCommit() {
+            if (getContext() != null) {
+                Toast.makeText(getContext(), R.string.pref_tablet_overview_style_restart_toast,
+                        Toast.LENGTH_SHORT).show();
+            }
+            new Handler(Looper.getMainLooper()).postDelayed(
+                    () -> android.os.Process.killProcess(android.os.Process.myPid()),
+                    LAUNCHER_RESTART_DELAY_MILLIS);
         }
 
         @Override
