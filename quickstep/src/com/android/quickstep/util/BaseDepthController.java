@@ -354,7 +354,9 @@ public class BaseDepthController {
     }
 
     private void clearWorkspaceDepthTargets() {
-        mLauncher.getDepthBlurTargets().forEach(target -> target.setRenderEffect(null));
+        // Route through the arbiter, which is the single writer of the content blur effect. It
+        // must know the effect is gone, otherwise it will skip re-applying an unchanged blur.
+        mLauncher.getBlurArbiter().clear();
     }
 
     private void setDepth(float depth) {

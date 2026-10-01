@@ -63,11 +63,31 @@ public final class LauncherBlurArbiter {
             return;
         }
         float value = Math.max(0f, radius);
-        if (Float.compare(mSourceBlur[source], value) == 0) {
+        // Only skip when the value is unchanged *and* the effect is known to be applied. If the
+        // effect was dropped (see {@link #clear()}) the same value must be written again.
+        if (Float.compare(mSourceBlur[source], value) == 0 && mAppliedBlur >= 0f) {
             return;
         }
         mSourceBlur[source] = value;
         applyContentBlur();
+    }
+
+    /**
+     * Clears the applied render effect and forgets which blur was last applied.
+     *
+     * <p>This is the arbiter's equivalent of a direct {@code target.setRenderEffect(null)} write:
+     * any caller that needs to drop the effect must go through here, otherwise the cached
+     * {@link #mAppliedBlur} would claim a blur that is no longer on the views and the next,
+     * unchanged request would be skipped.
+     */
+    public void clear() {
+        mAppliedBlur = -1f;
+        List<View> targets = mLauncher.getDepthBlurTargets();
+        for (View target : targets) {
+            if (target != null) {
+                target.setRenderEffect(null);
+            }
+        }
     }
 
     /**

@@ -129,6 +129,8 @@ public class LauncherBackAnimationController {
     private boolean mOverridingStatusBarFlags;
     private int mMaxBlurRadius;
     private int mLastBlurRadius = 0;
+    /** Whether this controller paused the launcher blurs and therefore owes an unpause. */
+    private boolean mLauncherBlursPaused = false;
 
     private final ComponentCallbacks mComponentCallbacks = new ComponentCallbacks() {
         @Override
@@ -349,6 +351,7 @@ public class LauncherBackAnimationController {
             Animations.cancelOngoingAnimation(mLauncher.getWorkspace());
             Animations.cancelOngoingAnimation(mLauncher.getHotseat());
             mLauncher.getDepthController().pauseBlursOnWindows(true);
+            mLauncherBlursPaused = true;
             mLauncher.getDepthController().stateDepth.setValue(
                     LauncherState.BACKGROUND_APP.getDepth(mLauncher));
             setLauncherScale(ScalingWorkspaceRevealAnim.MIN_SIZE);
@@ -554,9 +557,12 @@ public class LauncherBackAnimationController {
         if (mScrimLayer != null) {
             removeScrimLayer();
         }
-        if (!mLauncher.getWorkspace().isOverlayShown()
-                && !mLauncher.isInState(LauncherState.ALL_APPS)) {
+        // Release the pause iff this controller actually paused, independently of the state we
+        // ended up in. The launcher state can cross into ALL_APPS while the gesture is in flight,
+        // and re-checking that here would leave the blurs paused forever.
+        if (mLauncherBlursPaused) {
             mLauncher.getDepthController().pauseBlursOnWindows(false);
+            mLauncherBlursPaused = false;
         }
         mLastBlurRadius = 0;
     }
